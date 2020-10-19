@@ -14,6 +14,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,8 +39,10 @@ public class Attribute {
     private AttributeType attributeTypeId;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "attributeId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Value> attributeId;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "attributeId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<ListAttribute> attributeIdAtList;
 }
