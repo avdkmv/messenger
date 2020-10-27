@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class Chat {
         return link;
     }
 
-    public void addUser(final User user) {
+    public void addUser(User user) {
         users.put(user.getUsername(), user);
     }
 

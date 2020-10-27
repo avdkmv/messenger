@@ -18,7 +18,7 @@ function connect() {
     stompClient.connect({}, function (frame) {
         setConnected(true)
         // console.log("Connected: " + frame)
-        stompClient.subscribe("/topic/greetings", function (greeting) {
+        stompClient.subscribe("/topic/addUser", function (greeting) {
             showGreeting(JSON.parse(greeting.body).content)
         })
         stompClient.subscribe("/topic/chats", (chats) => {
@@ -38,7 +38,7 @@ function disconnect() {
 
 function sendName() {
     document.cookie = "username=".concat($("#name").val())
-    stompClient.send("/app/hello", {}, JSON.stringify({ name: $("#name").val() }))
+    stompClient.send("/app/addUser", {}, JSON.stringify({ username: $("#name").val() }))
 }
 
 function showGreeting(message) {
@@ -58,8 +58,19 @@ function createChat() {
     )
 }
 
+function getChatLink(chatName)
+{
+    theUrl = "/chat/" + chatName
+    username = document.cookie.split(";").filter((cookie) => cookie.includes("username="))[0].replace("username=", "")
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+    xmlHttp.send( JSON.stringify({username : username}) );
+    return xmlHttp.responseText;
+}
+
 function addChat(chat) {
-    $("#chat-list").append('<tr><td><a href="' + chat.link + '">' + chat.name + "</a></td></tr>")
+    chatName = chat.name
+    $("#chat-list").append('<tr><td><a link='+ chatName +' class="btn btn-primary link" id="chat-link" href="#" onclick="getChatLink(link)" >' + chatName + "</a></td></tr>")
 }
 
 function updateChatList(chats) {
