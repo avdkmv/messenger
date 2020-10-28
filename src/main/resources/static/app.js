@@ -18,7 +18,7 @@ function connect() {
     stompClient.connect({}, function (frame) {
         setConnected(true)
         // console.log("Connected: " + frame)
-        stompClient.subscribe("/topic/addUser", function (greeting) {
+        stompClient.subscribe("/topic/greetings", function (greeting) {
             showGreeting(JSON.parse(greeting.body).content)
         })
         stompClient.subscribe("/topic/chats", (chats) => {
@@ -38,7 +38,7 @@ function disconnect() {
 
 function sendName() {
     document.cookie = "username=".concat($("#name").val())
-    stompClient.send("/app/addUser", {}, JSON.stringify({ username: $("#name").val() }))
+    stompClient.send("/app/hello", {}, JSON.stringify({ username: $("#name").val() }))
 }
 
 function showGreeting(message) {
@@ -46,31 +46,48 @@ function showGreeting(message) {
 }
 
 function createChat() {
-    username = document.cookie.split(";").filter((cookie) => cookie.includes("username="))[0].replace("username=", "")
-    
+    username = document.cookie
+        .split(";")
+        .filter((cookie) => cookie.includes("username="))[0]
+        .replace("username=", "")
+
     stompClient.send(
         "/app/chat",
         {},
         JSON.stringify({
-            chatName: $("#chat-name").val(),
+            "chat-name": $("#chat-name").val(),
             username: username,
         }),
     )
 }
 
-function getChatLink(chatName)
-{
-    theUrl = "/chat/" + chatName
-    username = document.cookie.split(";").filter((cookie) => cookie.includes("username="))[0].replace("username=", "")
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
-    xmlHttp.send( JSON.stringify({username : username}) );
-    return xmlHttp.responseText;
+function getChatLink(link) {
+    const chatName = link.innerText
+    const url = "/chat/" + chatName
+    const username = document.cookie
+        .split(";")
+        .filter((cookie) => cookie.includes("username="))[0]
+        .replace("username=", "")
+
+    fetch(url, {
+        method: "POST",
+        body: username,
+    })
+        .then((res) => {
+            window.location.replace(res.url)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
 }
 
 function addChat(chat) {
-    chatName = chat.name
-    $("#chat-list").append('<tr><td><a link='+ chatName +' class="btn btn-primary link" id="chat-link" href="#" onclick="getChatLink(link)" >' + chatName + "</a></td></tr>")
+    const chatName = chat.name
+    const id = "chat-link".concat(chat.name)
+
+    $("#chat-list").append(
+        '<tr><td><a class="nav-link" href="#" onclick="getChatLink(this)">' + chatName + "</a></td></tr>",
+    )
 }
 
 function updateChatList(chats) {

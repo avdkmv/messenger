@@ -41,6 +41,20 @@
                         <tbody id="messages"></tbody>
                     </table>
                 </div>
+                <div class="col-md-6">
+                    <table id="user-list" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Users</th>
+                            </tr>
+                        </thead>
+                        <tbody id="members">
+                            <tr th:each="member : ${members}">
+                                <td th:text="${member.getUsername()}"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </body>

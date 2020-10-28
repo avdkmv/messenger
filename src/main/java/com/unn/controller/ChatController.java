@@ -6,8 +6,6 @@ import java.util.Optional;
 
 import com.unn.dto.ChatRequest;
 import com.unn.model.Chat;
-import com.unn.model.Greeting;
-import com.unn.model.User;
 import com.unn.service.ChatService;
 import com.unn.service.UserService;
 
@@ -15,7 +13,6 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.HtmlUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -62,12 +59,5 @@ public class ChatController {
         Optional<Chat> chat = service.findChat(chatName);
 
         return chat.isPresent() ? chat.get().messageHistory() : new ArrayList<>();
-    }
-
-    @MessageMapping("/addUser")
-    @SendTo("/topic/greetings")
-    public Greeting greeting(User user) {
-        userService.addUser(new User(user.getUsername()));
-        return new Greeting("Hello, " + HtmlUtils.htmlEscape(user.getUsername()) + "!");
     }
 }
