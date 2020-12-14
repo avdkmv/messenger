@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.unn.dto.Message;
 
@@ -50,7 +49,7 @@ public class Chat {
     }
 
     public List<User> getAllUsers() {
-        return users.values().stream().collect(Collectors.toList());
+        return new ArrayList<>(this.users.values());
     }
 
     public List<User> getPrivateChatUsers() {

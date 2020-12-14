@@ -18,17 +18,65 @@
         >
         <div id="main-content" class="container d-flex flex-row">
             <div class="col-2 mt-5 mb-5">
-                <label for="users">Users</label>
-                <ul id="users" class="list-group shadow"></ul>
+                <label class="mt-1" for="users">Users</label>
+                <ul id="users" class="list-group shadow mt-5"></ul>
             </div>
             <div class="col-2 mt-5 mb-5">
-                <label for="users">Your chats</label>
-                <ul id="chats" class="list-group"></ul>
+                <label class="mt-1" for="chats">Your chats</label>
+                <ul id="chats" class="list-group mt-5"></ul>
             </div>
             <div class="col-6 mt-5 mb-5">
-                <label for="users">Tickets</label>
-                <ul id="tickets" class="list-group"></ul>
+                <div class="d-flex align-items-center justify-content-between">
+                    <label for="tickets">Tickets</label>
+                    <!-- Button trigger modal -->
+                    <button
+                        type="button"
+                        class="btn btn-primary ml-2"
+                        data-toggle="modal"
+                        data-target="#exampleModalCenter"
+                    >
+                        Create ticket
+                    </button>
+
+                    <!-- Modal -->
+                    <div
+                        class="modal fade"
+                        id="exampleModalCenter"
+                        tabindex="-1"
+                        role="dialog"
+                        aria-labelledby="exampleModalCenterTitle"
+                        aria-hidden="true"
+                    >
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">New ticket</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form th:action="@{/ticket/new}" class="w-100" method="POST">
+                                        <div class="form-group">
+                                            <label for="ticketName">Ticket name</label>
+                                            <input type="text" id="ticketName" class="form-control" name="ticketName" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <textarea class="form-control" id="description" name="description"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" id="ticket-submit" class="btn btn-primary">Create</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <ul id="tickets" class="list-group mt-5"></ul>
             </div>
         </div>
+
+        <script src="/webjars/bootstrap/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

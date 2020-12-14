@@ -3,9 +3,12 @@ package com.unn.controller;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.unn.dto.ChatRequest;
 import com.unn.dto.TicketRequest;
+import com.unn.dto.TicketResponse;
 import com.unn.model.Chat;
 import com.unn.model.Ticket;
 import com.unn.model.User;
@@ -13,33 +16,49 @@ import com.unn.service.ChatService;
 import com.unn.service.TicketService;
 import com.unn.service.UserService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class TicketController {
+    @Autowired
+    private SimpMessagingTemplate template;
+
     private final ChatService chatService;
     private final UserService userService;
     private final TicketService ticketService;
 
-    @MessageMapping("/ticket")
-    @SendTo("/topic/tickets")
-    public List<Ticket> createTicket(TicketRequest request) {
-        Chat newChat = chatService.addChat(new ChatRequest(request.getUsername(), request.getTicketName()));
-        ticketService.createTicket(request, userService.getUser(request.getUsername()).get(), newChat);
-        return ticketService.allTickets();
+    @PostMapping("/ticket/new")
+    public void createTicket(@RequestBody TicketRequest request, Authentication auth) {
+        ChatRequest chatRequest = new ChatRequest();
+        chatRequest.setId(UUID.randomUUID().toString());
+        chatRequest.setUsername(auth.getName());
+
+        Chat newChat = chatService.addChat(chatRequest);
+        ticketService.createTicket(request, userService.getUser(auth.getName()).get(), newChat);
+        template.convertAndSend("/topic/tickets", true);
     }
 
     @MessageMapping("/tickets")
-    @SendTo("/topic/tickets")
-    public List<Ticket> getAllTickets(@CookieValue("username") String userName) {
-        return ticketService.allTicketsForUser(userName);
+    @SendToUser(destinations = "/queue/tickets", broadcast = false)
+    public List<TicketResponse> getAllTickets(Authentication auth) {
+        log.info("User name: {}", auth.getName());
+        List<Ticket> allTicketsForUser = ticketService.allTicketsForUser(auth.getName());
+
+        return allTicketsForUser.stream().map(ticket -> new TicketResponse(ticket)).collect(Collectors.toList());
     }
 
     @MessageMapping("/ticket/{name}/user/{username}")
@@ -49,7 +68,7 @@ public class TicketController {
         @DestinationVariable("username") String userName
     ) {
         Collection<User> userList = ticketService.addUser(ticketName, userName);
-        userService.getUser(userName).ifPresent(user -> getAllTickets(user.getUsername()));
+        //userService.getUser(userName).ifPresent(user -> getAllTickets(user.getUsername()));
 
         return userList;
     }

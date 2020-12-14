@@ -15,6 +15,14 @@ function connect(callback) {
     stompClient.connect({}, function () {
         console.log("Connected")
 
+        stompClient.subscribe(topic.concat("/users"), (users) => {
+            stompClient.send(sendUrl.concat("/users/all"), {}, "")
+        })
+        stompClient.subscribe(queue.concat("/users"), (users) => {
+            updateUserList(JSON.parse(users.body))
+        })
+        stompClient.send(sendUrl.concat("/users/all"), {}, "")
+
         stompClient.subscribe(topic.concat("/chats"), () => {
             stompClient.send(sendUrl.concat("/chats"), {}, "")
         })
@@ -23,13 +31,13 @@ function connect(callback) {
         })
         stompClient.send(sendUrl.concat("/chats"), {}, "")
 
-        stompClient.subscribe(topic.concat("/users"), (users) => {
-            stompClient.send(sendUrl.concat("/users/all"), {}, "")
+        stompClient.subscribe(topic.concat("/tickets"), () => {
+            stompClient.send(sendUrl.concat("/tickets"), {}, "")
         })
-        stompClient.subscribe(queue.concat("/users"), (users) => {
-            updateUserList(JSON.parse(users.body))
+        stompClient.subscribe(queue.concat("/tickets"), (tickets) => {
+            updateTicketList(JSON.parse(tickets.body))
         })
-        stompClient.send(sendUrl.concat("/users/all"), {}, "")
+        stompClient.send(sendUrl.concat("/tickets"), {}, "")
 
         if (callback) {
             callback()
@@ -68,6 +76,18 @@ function addChat(chat) {
     )
 }
 
+function addTicket(ticket) {
+    $("#tickets").append(
+        "<li id='ticket' class='list-group-item shadow mb-2'><div id='ticketname'>" +
+            ticket.name +
+            "</div><div id='participants' class='text-muted mt-2'>" +
+            ticket.participants +
+            "</div><a id='openticket' href='" +
+            ticket.link +
+            "' class='text-decoration-none stretched-link' onclick='openTicket()'></a></li>",
+    )
+}
+
 function updateUserList(users) {
     $("#users li").remove()
     users.forEach((user) => {
@@ -82,6 +102,29 @@ function updateChatList(chats) {
     })
 }
 
+function updateTicketList(tickets) {
+    $("#tickets li").remove()
+    tickets.forEach((ticket) => {
+        addTicket(ticket)
+    })
+}
+
+function createTicket() {
+    fetch("/ticket/new", {
+        method: "POST",
+        body: JSON.stringify({
+            ticketName: $("#ticketName").val(),
+            description: $("#description").val(),
+        }),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    $("#exampleModalCenter").modal("hide")
+    $("#ticketName").val = ""
+    $("#description").val = ""
+}
+
 $(function () {
     connect()
     $("form").on("submit", function (e) {
@@ -89,5 +132,8 @@ $(function () {
     })
     $("#send").click(function () {
         sendName()
+    })
+    $("#ticket-submit").click(function () {
+        createTicket()
     })
 })

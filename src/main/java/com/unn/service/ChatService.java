@@ -25,7 +25,27 @@ public class ChatService {
     private final UserService userService;
 
     public Chat addChat(final ChatRequest request) {
-        return null;
+        Optional<User> creatorUser = userService.getUser(
+            request.getUsername()
+        );
+
+        Chat newChat = new Chat();
+        newChat.setId(request.getId());
+        newChat.generateLink();
+        newChat.setPrivate(false);
+
+        if (creatorUser.isPresent()) {
+            newChat.setCreator(creatorUser.get().getUsername());
+            newChat.addUser(creatorUser.get());
+        }
+
+        Optional<Chat> chat = findChat(newChat);
+        if (!chat.isPresent()) {
+            this.chats.put(newChat.getId(), newChat);
+            return newChat;
+        }
+
+        return chat.get();
     }
 
     public Chat addChat(final ChatRequest request, String creator, String other) {

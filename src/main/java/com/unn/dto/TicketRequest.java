@@ -10,7 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TicketRequest {
-    private String username;
     private String ticketName;
-    private String desription;
+    private String description;
 }

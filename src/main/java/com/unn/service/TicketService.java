@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.unn.dto.TicketRequest;
@@ -26,13 +27,15 @@ public class TicketService {
 
     public void createTicket(final TicketRequest ticketRequest, final User user, final Chat chat) {
         Ticket ticket = new Ticket();
-        ticket.setCreator(ticketRequest.getUsername());
+        ticket.setId(UUID.randomUUID().toString());
+        ticket.setCreator(user.getUsername());
         ticket.setName(ticketRequest.getTicketName());
-        ticket.setDescription(ticketRequest.getDesription());
+        ticket.setDescription(ticketRequest.getDescription());
         ticket.setChat(chat);
         ticket.addUser(user);
+        ticket.generateLink();
         if (!this.tickets.containsKey(ticket.getName())) {
-            this.tickets.put(ticket.getName(), ticket);
+            this.tickets.put(ticket.getId(), ticket);
         }
     }
 
@@ -40,8 +43,8 @@ public class TicketService {
         return new ArrayList<>(this.tickets.values());
     }
 
-    public Optional<Ticket> findTicket(String name) {
-        return Optional.ofNullable(this.tickets.get(name));
+    public Optional<Ticket> findTicket(String id) {
+        return Optional.ofNullable(this.tickets.get(id));
     }
 
     public List<Ticket> allTicketsForUser(String userName) {
@@ -52,8 +55,8 @@ public class TicketService {
             .collect(Collectors.toList());
     }
 
-    public Collection<User> addUser(String chatName, String userName) {
-        Optional<Ticket> ticket = findTicket(chatName);
+    public Collection<User> addUser(String id, String userName) {
+        Optional<Ticket> ticket = findTicket(id);
 
         if (ticket.isPresent()) {
             if (userName != null) {
