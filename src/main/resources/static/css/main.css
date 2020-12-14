@@ -1,0 +1,15 @@
+.login-form {
+    max-width: 40% !important;
+}
+
+.chat {
+    height: 80vh !important;
+}
+
+.msg {
+    max-width: 75% !important;
+}
+
+.msg-enter {
+    height: 20vh !important;
+}
