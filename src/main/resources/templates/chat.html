@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="${creator} + '\'s chat'"></title>
+
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="/js/chat.js"></script>
+        <link href="/css/main.css" rel="stylesheet" />
+
+        <script th:inline="javascript">
+            var chatId = [[${id}]]
+        </script>
+
+        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="/webjars/bootstrap/js/bootstrap.bundle.min.js"></script>
+    </head>
+    <body>
+        <noscript
+            ><h2 style="color: #ff0000;">
+                Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please
+                enable Javascript and reload this page!
+            </h2></noscript
+        >
+        <div id="main-content" class="container">
+            <div class="d-flex flex-row">
+                <div class="col-md-3 mt-5 mr-3">
+                    <div>
+                        <label for="messages">[[${name}]]</label>
+                    </div>
+                    <a href="/dashboard" id="back">To dashboard...</a>
+                </div>
+                <div class="col-md-8 chat">
+                    <div id="messages" class="msg-history pl-3 pr-3 mb-3"></div>
+                    <form class="send-form mw-100 flex-nowrap">
+                        <div class="form-group d-flex">
+                            <input type="text" id="message" class="form-control" placeholder="Type message..." />
+                            <button id="send" class="btn btn-primary ml-2" type="submit">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

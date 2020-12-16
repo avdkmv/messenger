@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hello WebSocket</title>
+
+        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
+        <script src="/js/app.js"></script>
+        <link rel="stylesheet" href="/css/main.css" />
+    </head>
+    <body>
+        <noscript
+            ><h2 style="color: #ff0000;">
+                Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please
+                enable Javascript and reload this page!
+            </h2></noscript
+        >
+        <header class="navbar navbar-expand-md navbar-dark mb-3">
+            <div class="container align-items-center">
+                <label class="col-md-3 mt-1" for="users">Users</label>
+                <label class="col-md-4 mt-1" for="chats">Your chats</label>
+                <div class="col-md-5">
+                    <label class="mt-1" for="tickets">Tickets</label>
+                    <a type="button" href="/signup" class="btn btn-light ml-2 float-right">Signup</a>
+                    <button
+                        type="button"
+                        class="btn btn-light float-right"
+                        data-toggle="modal"
+                        data-target="#exampleModalCenter"
+                    >
+                        Create ticket
+                    </button>
+                    <div
+                        class="modal fade text-dark"
+                        id="exampleModalCenter"
+                        tabindex="-1"
+                        role="dialog"
+                        aria-labelledby="exampleModalCenterTitle"
+                        aria-hidden="true"
+                    >
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">New ticket</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form th:action="@{/ticket/new}" class="w-100" method="POST">
+                                        <div class="form-group">
+                                            <label for="ticketName">Ticket name</label>
+                                            <input type="text" id="ticketName" class="form-control" name="ticketName" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <textarea
+                                                class="form-control"
+                                                id="description"
+                                                name="description"
+                                            ></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" id="ticket-submit" class="btn btn-primary">Create</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div id="main-content" class="container d-flex flex-row">
+            <div class="col-md-3">
+                <ul id="users" class="list-group"></ul>
+            </div>
+            <div class="col-md-4">
+                <ul id="chats" class="list-group"></ul>
+            </div>
+            <div class="col-md-5">
+                <ul id="tickets" class="list-group"></ul>
+            </div>
+        </div>
+
+        <script src="/webjars/bootstrap/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
