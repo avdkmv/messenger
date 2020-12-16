@@ -73,7 +73,7 @@ public class ChatController {
         log.info("Sent msg history to user {}", auth.getName());
         Optional<Chat> chat = chatService.findByIdSecured(chatName, auth);
 
-        return chat.isPresent() ? chat.get().messageHistory(auth.getName()).join() : new ArrayList<>();
+        return chat.isPresent() ? chat.get().messageHistory(auth.getName()) : new ArrayList<>();
     }
     // @MessageMapping("/chat/{name}/user/{username}")
     // @SendTo("/topic/chat/{name}/users")

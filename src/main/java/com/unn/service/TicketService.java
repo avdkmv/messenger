@@ -7,13 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import com.unn.dto.TicketRequest;
 import com.unn.model.Chat;
 import com.unn.model.Ticket;
 import com.unn.model.User;
-
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class TicketService {
-    private Map<String, Ticket> tickets = new HashMap<>();
+    private Map<String, Ticket> tickets = new ConcurrentHashMap<>();
 
     private final UserService userService;
 
@@ -43,8 +44,17 @@ public class TicketService {
         return new ArrayList<>(this.tickets.values());
     }
 
-    public Optional<Ticket> findTicket(String id) {
+    public Optional<Ticket> findById(String id) {
         return Optional.ofNullable(this.tickets.get(id));
+    }
+
+    public Optional<Ticket> findByIdSecured(String id, Authentication auth) {
+        Optional<Ticket> ticket = findById(id);
+        if (ticket.isPresent() && ticket.get().getUsers().containsKey(auth.getName())) {
+            return ticket;
+        }
+
+        return Optional.empty();
     }
 
     public List<Ticket> allTicketsForUser(String userName) {
@@ -55,18 +65,17 @@ public class TicketService {
             .collect(Collectors.toList());
     }
 
-    public Collection<User> addUser(String id, String userName) {
-        Optional<Ticket> ticket = findTicket(id);
+    public void addUser(String id, String userName) {
+        Optional<Ticket> ticket = findById(id);
 
         if (ticket.isPresent()) {
             if (userName != null) {
                 Optional<User> optionalUser = userService.getUser(userName);
                 optionalUser.ifPresent((user) -> {
                     ticket.get().addUser(user);
+                    ticket.get().getChat().addUser(user);
                 });
             }
-            return ticket.get().getUsers().values();
         }
-        return List.of();
     }
 }

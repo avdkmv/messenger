@@ -28,6 +28,6 @@ public class ChatPageController {
             return "chat";
         }
 
-        return "redirect:/main";
+        return "redirect:/dashboard";
     }
 }

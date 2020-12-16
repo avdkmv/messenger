@@ -1,17 +1,11 @@
 package com.unn.dto;
 
 import java.util.List;
-
 import com.unn.model.Chat;
 import com.unn.model.User;
+import lombok.Data;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class ChatResponse {
     private String name = "Conversation";
     private String link;

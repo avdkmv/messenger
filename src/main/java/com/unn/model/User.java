@@ -1,21 +1,14 @@
 package com.unn.model;
 
 import java.util.Collection;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@Getter
-@Setter
 public class User implements UserDetails {
     private static final long serialVersionUID = 6602651258712907377L;
 

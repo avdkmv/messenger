@@ -6,24 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-
 import com.unn.dto.Message;
-
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
+import lombok.Data;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class Chat {
     private String id;
     private String name = "Conversation";
@@ -64,8 +52,7 @@ public class Chat {
         return List.of();
     }
 
-    @Async
-    public CompletableFuture<List<Message>> messageHistory(int limit, String user) {
+    public List<Message> messageHistory(int limit, String user) {
         if (limit > messages.size()) {
             limit = messages.size();
         }
@@ -75,11 +62,10 @@ public class Chat {
             msgHistory.add(new Message(messages.get(i), user));
         }
 
-        return CompletableFuture.completedFuture(msgHistory);
+        return msgHistory;
     }
 
-    @Async
-    public CompletableFuture<List<Message>> messageHistory(String user) {
+    public List<Message> messageHistory(String user) {
         return messageHistory(messages.size(), user);
     }
 

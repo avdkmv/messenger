@@ -1,6 +1,15 @@
 var stompClient = null
+
+const topic = "/topic/{type}/{id}"
+const queue = "/user/queue/{type}/{id}"
+
 var chatTopic = null
 var chatSend = null
+var chatQueue = null
+
+var ticketTopic = null
+var ticketSend = null
+var ticketQueue = null
 
 function connect() {
     var socket = new SockJS("/stomp")
@@ -8,9 +17,13 @@ function connect() {
     stompClient.debug = false
     console.log("Connecting...")
 
-    chatTopic = "/topic/chat/".concat(chatId)
-    chatQueue = "/user/queue/chat/".concat(chatId)
-    chatSend = chatTopic.replace("/topic", "/app")
+    chatTopic = topic.replace("{type}", "chat").replace("{id}", chatId)
+    chatSend = chatTopic.replace("topic", "app")
+    chatQueue = queue.replace("{type}", "chat").replace("{id}", chatId)
+
+    ticketTopic = topic.replace("{type}", "ticket").replace("{id}", ticketId)
+    ticketSend = ticketTopic.replace("topic", "app")
+    ticketQueue = queue.replace("{type}", "ticket").replace("{id}", ticketId)
     stompClient.connect({}, () => {
         console.log("Connected")
         stompClient.subscribe(chatTopic, function () {
@@ -78,7 +91,7 @@ function deleteUser() {
 }
 
 function addUser(username) {
-    stompClient.send(chatSend.concat("/user/").concat(username), {}, "")
+    stompClient.send(ticketSend.concat("/user/").concat(username), {}, "")
 }
 
 function showSearchResults(results) {
@@ -107,6 +120,10 @@ $(function () {
     })
     $("#send").click(function () {
         sendMessage()
+    })
+
+    $("#send-user").click(() => {
+        addUser($("#user").val())
     })
     // $("#username-input").change(function (e) {
     //     if (e.target.value == null || e.target.value.length === 0) {
