@@ -6,9 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import com.unn.dto.Message;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 
 import lombok.AllArgsConstructor;
@@ -29,7 +33,7 @@ public class Chat {
     private boolean isPrivate;
 
     private Map<String, User> users = new HashMap<>();
-    private List<Message> messages = new ArrayList<>();
+    private List<Message> messages = new CopyOnWriteArrayList<>();
 
     public String generateLink() {
         link = "/chat/" + id;
@@ -45,7 +49,7 @@ public class Chat {
     }
 
     public void newMessage(String message, Authentication auth) {
-        messages.add(new Message(message, auth.getName(), Instant.now().toString(), false));
+        messages.add(new Message(message, auth.getName(), Instant.now().toString()));
     }
 
     public List<User> getAllUsers() {
@@ -60,17 +64,22 @@ public class Chat {
         return List.of();
     }
 
-    public List<Message> messageHistory(int limit, String user) {
+    @Async
+    public CompletableFuture<List<Message>> messageHistory(int limit, String user) {
         if (limit > messages.size()) {
             limit = messages.size();
         }
 
-        List<Message> msgHistory = messages.subList(messages.size() - limit, messages.size());
-        msgHistory.forEach(msg -> msg.updateCurrentSenderFlag(user));
-        return msgHistory;
+        final List<Message> msgHistory = new CopyOnWriteArrayList<>();
+        for (int i = messages.size() - limit; i < messages.size(); i++) {
+            msgHistory.add(new Message(messages.get(i), user));
+        }
+
+        return CompletableFuture.completedFuture(msgHistory);
     }
 
-    public List<Message> messageHistory(String user) {
+    @Async
+    public CompletableFuture<List<Message>> messageHistory(String user) {
         return messageHistory(messages.size(), user);
     }
 
@@ -83,7 +92,6 @@ public class Chat {
             .findFirst();
 
         name.append(username.get());
-        this.name = name.toString();
         return name.toString();
     }
 

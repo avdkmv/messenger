@@ -55,7 +55,6 @@ public class TicketController {
     @MessageMapping("/tickets")
     @SendToUser(destinations = "/queue/tickets", broadcast = false)
     public List<TicketResponse> getAllTickets(Authentication auth) {
-        log.info("User name: {}", auth.getName());
         List<Ticket> allTicketsForUser = ticketService.allTicketsForUser(auth.getName());
 
         return allTicketsForUser.stream().map(ticket -> new TicketResponse(ticket)).collect(Collectors.toList());

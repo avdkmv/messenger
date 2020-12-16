@@ -58,7 +58,7 @@ function createChat(item) {
 
 function addUser(user) {
     $("#users").append(
-        "<li id='user' class='list-group-item d-flex justify-content-between'><div id='username'>" +
+        "<li id='user' class='list-group-item border-0 shadow mb-2 d-flex justify-content-between flex-wrap'><div id='username'>" +
             user.username +
             "</div><a id='chat' href='#' class='text-decoration-none' onclick='createChat(this)'>chat...</a></li>",
     )
@@ -66,21 +66,21 @@ function addUser(user) {
 
 function addChat(chat) {
     $("#chats").append(
-        "<li id='chat' class='list-group-item shadow mb-2'><div id='chatname'>" +
+        "<li id='chat' class='list-group-item border-0 shadow mb-2'><div id='chatname'>" +
             chat.name +
             "</div><div id='participants' class='text-muted mt-2'>" +
             chat.participants +
             "</div><a id='openchat' href='" +
             chat.link +
-            "' class='text-decoration-none stretched-link' onclick='openChat()'></a></li>",
+            "' class='text-decoration-none stretched-link' onclick='openChat(event)'></a></li>",
     )
 }
 
 function addTicket(ticket) {
     $("#tickets").append(
-        "<li id='ticket' class='list-group-item shadow mb-2'><div id='ticketname'>" +
+        "<li id='ticket' class='list-group-item border-0 shadow mb-2'><div id='ticketname'>" +
             ticket.name +
-            "</div><div id='participants' class='text-muted mt-2'>" +
+            "</div><div id='participants' class='text-muted text-break mt-2'>" +
             ticket.participants +
             "</div><a id='openticket' href='" +
             ticket.link +
@@ -107,6 +107,11 @@ function updateTicketList(tickets) {
     tickets.forEach((ticket) => {
         addTicket(ticket)
     })
+}
+
+function openChat(event) {
+    event.preventDefault()
+    window.open(event.target.href)
 }
 
 function createTicket() {

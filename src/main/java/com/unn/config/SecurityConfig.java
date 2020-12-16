@@ -1,7 +1,6 @@
 package com.unn.config;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -54,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin()
             .loginPage("/login")
             .loginProcessingUrl("/login")
-            .defaultSuccessUrl("/main")
+            .defaultSuccessUrl("/dashboard")
             .failureUrl("/login?error=true")
             .permitAll()
             .and()
@@ -68,8 +67,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
         config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 

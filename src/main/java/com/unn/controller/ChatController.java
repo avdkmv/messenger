@@ -11,24 +11,22 @@ import com.unn.dto.ChatResponse;
 import com.unn.dto.Message;
 import com.unn.model.Chat;
 import com.unn.service.ChatService;
-import com.unn.service.UserService;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @Slf4j
 public class ChatController {
     private final ChatService chatService;
-    private final UserService userService;
 
     @MessageMapping("/chat")
     @SendTo("/topic/chats")
@@ -43,18 +41,15 @@ public class ChatController {
     @MessageMapping("/chats")
     @SendToUser(destinations = "/queue/chats", broadcast = false)
     public List<ChatResponse> getAllChats(Authentication auth) {
-        log.info("User name: {}", auth.getName());
         List<Chat> allChatsForUser = chatService.allChatsForUser(auth.getName());
 
         return allChatsForUser
             .stream()
+            .filter(chat -> chat.isPrivate())
             .map(
                 chat -> {
                     ChatResponse chatResponse = new ChatResponse(chat);
-                    if (chat.isPrivate()) {
-                        chatResponse.generatePrivateName(auth.getName());
-                    }
-
+                    chatResponse.generatePrivateName(auth.getName());
                     return chatResponse;
                 }
             )
@@ -75,9 +70,10 @@ public class ChatController {
     @MessageMapping("/chat/{id}/messages")
     @SendToUser(destinations = "/queue/chat/{id}", broadcast = false)
     public List<Message> messages(@DestinationVariable("id") String chatName, Authentication auth) {
+        log.info("Sent msg history to user {}", auth.getName());
         Optional<Chat> chat = chatService.findByIdSecured(chatName, auth);
 
-        return chat.isPresent() ? chat.get().messageHistory(auth.getName()) : new ArrayList<>();
+        return chat.isPresent() ? chat.get().messageHistory(auth.getName()).join() : new ArrayList<>();
     }
     // @MessageMapping("/chat/{name}/user/{username}")
     // @SendTo("/topic/chat/{name}/users")

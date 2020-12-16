@@ -24,6 +24,7 @@ public class ChatPageController {
         if (chat.isPresent()) {
             model.addAttribute("creator", chat.get().getCreator());
             model.addAttribute("id", chat.get().getId());
+            model.addAttribute("name", chat.get().generatePrivateName(auth.getName()));
             return "chat";
         }
 

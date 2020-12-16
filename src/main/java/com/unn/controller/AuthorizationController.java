@@ -49,6 +49,6 @@ public class AuthorizationController {
         }
 
         template.convertAndSend("/topic/users", true);
-        return "redirect:/main";
+        return "redirect:/dashboard";
     }
 }

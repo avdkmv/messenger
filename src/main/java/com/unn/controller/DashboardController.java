@@ -5,16 +5,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class MainPageController {
+public class DashboardController {
 
-    @GetMapping("/main")
+    @GetMapping("/dashboard")
     public String getMainPage(Model model) {
         // model.addAttribute("users", userService.getAllUsers());
-        return "main";
+        return "dashboard";
     }
 
     @GetMapping("/")
     public String root() {
-        return "redirect:/main";
+        return "redirect:/dashboard";
     }
 }

@@ -34,13 +34,13 @@ function connect() {
 }
 
 function showMessage(message) {
-    const justify = message.currentUser ? "justify-content-end" : "justify-content-start"
+    console.log(message)
 
     $("#messages").append(
-        "<div id='msg' class='d-flex " +
-            justify +
-            " mb-3'>" +
-            "<div class='msg rounded shadow p-3 text-wrap'><span>" +
+        "<div id='msg' class='msg-container d-flex " +
+            message.justify +
+            " mt-3'>" +
+            "<div class='msg rounded shadow-md p-3 text-wrap text-break'><span>" +
             message.text +
             "</span><div class='text-muted'><small>" +
             message.sender +

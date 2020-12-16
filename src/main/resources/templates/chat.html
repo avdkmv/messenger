@@ -24,25 +24,21 @@
             </h2></noscript
         >
         <div id="main-content" class="container">
-            <div class="mt-5 mb-auto d-flex flex-row">
-                <div class="col-2 mr-3">dgdnasogf</div>
-                <div class="col-md-6 chat">
-                    <div id="messages" class="mb-3 h-100 overflow-auto p-2"></div>
-                    <div class="w-100 msg-enter">
-                        <form class="form-inline flex-nowrap">
-                            <div class="form-group col">
-                                <input
-                                    type="text"
-                                    id="message"
-                                    class="form-control w-100"
-                                    placeholder="Type message..."
-                                />
-                            </div>
-                            <div class="col">
-                                <button id="send" class="btn btn-primary ml-2" type="submit">Send</button>
-                            </div>
-                        </form>
+            <div class="d-flex flex-row">
+                <div class="col-md-3 mt-5 mr-3">
+                    <div>
+                        <label for="messages">[[${name}]]</label>
                     </div>
+                    <a href="/dashboard" id="back">To dashboard...</a>
+                </div>
+                <div class="col-md-8 chat">
+                    <div id="messages" class="msg-history pl-3 pr-3 mb-3"></div>
+                    <form class="send-form mw-100 flex-nowrap">
+                        <div class="form-group d-flex">
+                            <input type="text" id="message" class="form-control" placeholder="Type message..." />
+                            <button id="send" class="btn btn-primary ml-2" type="submit">Send</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
